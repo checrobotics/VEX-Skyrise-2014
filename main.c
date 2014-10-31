@@ -197,14 +197,14 @@ task autonomous()
 
 task usercontrol()
 {
-
+   startTask(tankDrive);
+   startTask(stage1);
+   startTask(stage2);
+   startTask(stage3);
+   startTask(claw);
     while (true)
     {
-        startTask(tankDrive);
-        startTask(stage1);
-        startTask(stage2);
-        startTask(stage3);
-        startTask(claw);
+        
     }
 }
 
