@@ -2,7 +2,7 @@
 #pragma config(Sensor, dgtl3,           DRIVE_MOTOR_ENCODER_RIGHT,      sensorQuadEncoder)
 #pragma config(Motor,  port2,           DRIVE_MOTOR_LEFT,               tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port3,           LIFT_STAGE_2,                   tmotorVex393_MC29, openLoop)
-#pragma config(Motor,  port4,           LIFT_STAGE_3,                   tmotorVex393_MC29, openLoop)
+#pragma config(Motor,  port4,           LIFT_STAGE_3,                   tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port5,           CLAW_MOTOR,                     tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port8,           LIFT_STAGE_1,                   tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port9,           DRIVE_MOTOR_RIGHT,              tmotorVex393_MC29, openLoop)
@@ -67,12 +67,12 @@ const int FULL_REVERSE      =   -127;
 
 
 task tankDrive() {
-    
+
     while (true) {
         motor [DRIVE_MOTOR_RIGHT] = vexRT[Ch2];
         motor [DRIVE_MOTOR_LEFT] = vexRT[Ch3];
     }
-    
+
     EndTimeSlice();
 }
 
@@ -94,79 +94,95 @@ task claw() {
 
 
 task stage1() {
-    while (true) {
-        
-        if (vexRT[Btn5U] == 1) {
+  int stage_one_up = 0;
+
+	while (true) {
+
+        if (vexRT[Btn5U] == 1 && stage_one_up == 0) {
             motor[LIFT_STAGE_1] = FULL_FORWARD;
+            wait1Msec(4000);
+			      stage_one_up = 1;
         }
-        else if (vexRT[Btn5D] == 1) {
+        else if (vexRT[Btn5D] == 1 && stage_one_up == 1) {
             motor[LIFT_STAGE_1] = FULL_REVERSE;
-        }
-        else {
+            wait1Msec(3000);
+        	  stage_one_up = 0;
+					}
+				else {
             motor[LIFT_STAGE_1] = OFF;
         }
-        
-        
+
+
         EndTimeSlice();
-        
-        
-        
-        
+
+
+
+
     }//END OF WHILE LOOP
-    
-    
-    
+
+
+
 }//End of STAGE1 TASK
 ////////////////////////////////////////////////////////////////////////////////////////
 
 task stage2() {
+	int stage_two_up = 0;
     while (true) {
-        
-        if (vexRT[Btn6U] == 1) {
+
+        if (vexRT[Btn6U] == 1 && stage_two_up == 0) {
             motor[LIFT_STAGE_2] = FULL_FORWARD;
+            wait1Msec(4700);
+            stage_two_up = 1;
         }
-        else if (vexRT[Btn6D] == 1) {
+        else if (vexRT[Btn6D] == 1 && stage_two_up == 1) {
             motor[LIFT_STAGE_2] = FULL_REVERSE;
+            wait1Msec(3000);
+            stage_two_up = 0;
         }
         else {
             motor[LIFT_STAGE_2] = OFF;
         }
-        
-        
+
+
         EndTimeSlice();
-        
-        
-        
-        
+
+
+
+
     }//END OF WHILE LOOP
-    
-    
-    
+
+
+
 }//End of STAGE1 TASK
 ////////////////////////////////////////////////////////////////////////////////////////
 
 task stage3() {
+  int stage_three_up = 0;
     while (true) {
-        
-        if (vexRT[Btn7U] == 1) {
+
+        if (vexRT[Btn7U] == 1 && stage_three_up == 0) {
             motor[LIFT_STAGE_3] = FULL_FORWARD;
+            wait1Msec(3500);
+            stage_three_up = 1;
         }
-        else if (vexRT[Btn7D] == 1) {
+        else if (vexRT[Btn7D] == 1 && stage_three_up == 1) {
             motor[LIFT_STAGE_3] = FULL_REVERSE;
+            wait1Msec(3000);
+            stage_three_up = 0;
         }
         else {
             motor[LIFT_STAGE_3] = OFF;
         }
-        
+
         EndTimeSlice();
-        
-        
-        
-        
+
+
+
+
     }//END OF WHILE LOOP
-    
-    
-    
+
+
+
 }
 
 
@@ -189,7 +205,10 @@ void pre_auton()
 
 task autonomous()
 {
-    AutonomousCodePlaceholderForTesting();  // Remove this function call once you have "real" code.
+    //AutonomousCodePlaceholderForTesting();  // Remove this function call once you have "real" code.//
+    driveForwardByTime(FULL_FORWARD, 1000);
+    wait1Msec(1000);
+
 }
 
 
@@ -198,25 +217,13 @@ task autonomous()
 task usercontrol()
 {
    startTask(tankDrive);
+
    startTask(stage1);
    startTask(stage2);
    startTask(stage3);
    startTask(claw);
     while (true)
     {
-        
+
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
